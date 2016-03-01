@@ -27,6 +27,6 @@ It currently *does not support* Axis Mappings.
 
 This rewrite could be 'proper' of Epic would allow the firing of Input Events by their names instead of FKeys alone. If this is done, no 'behind the scenes' magic would be needed and it would be trivial to directly map Steam Controller actions to your projects actions, both Action Mappings and Axis Mappings.
 
-# Tutorial On Usage
+# Usage
 
-Coming... soon.
+You will need an App ID to properly set up Steam Controller settings. Once you do, follow along with the Steam Controller API documentation regarding the controller script files. You can skip the parts about game implementation. When you define your controller actions, use the same exact names for your actions as they are named in your project's Action Mapping list.
