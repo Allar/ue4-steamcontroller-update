@@ -14,6 +14,7 @@ public class SteamController : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputDevice",
+			"InputCore",
 		});
 
         AddThirdPartyPrivateStaticDependencies(Target,
