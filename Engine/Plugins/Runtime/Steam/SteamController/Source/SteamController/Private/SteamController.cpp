@@ -1,4 +1,4 @@
-// Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
 #include "SteamControllerPrivatePCH.h"
 
@@ -52,8 +52,10 @@ class FSteamController : public IInputDevice
 
 public:
 
-	FSteamController(const TSharedRef< FGenericApplicationMessageHandler >& InMessageHandler)
-		: MessageHandler(InMessageHandler)
+	FSteamController(const TSharedRef< FGenericApplicationMessageHandler >& InMessageHandler) :
+		MessageHandler(InMessageHandler), 
+		bSteamAPIInitialized(false), 
+		bSteamControllerInitialized(false)
 	{
 		// Attempt to load the Steam Library
 		if (!LoadSteamModule())
@@ -62,13 +64,13 @@ public:
 		}
 
 		// Initialize the API, so we can start calling SteamController functions
-		bool bAPIInitialized = SteamAPI_Init();
+		bSteamAPIInitialized = SteamAPI_Init();
 
 			// [RCL] 2015-01-23 FIXME: move to some other code than constructor so we can handle failures more gracefully
-		if (bAPIInitialized && (SteamController() != nullptr))
+		if (bSteamAPIInitialized && (SteamController() != nullptr))
 		{
-			bool bInited = SteamController()->Init();
-			UE_LOG(LogSteamController, Log, TEXT("SteamController %s initialized."), bInited ? TEXT("could not be") : TEXT("has been"));
+			bSteamControllerInitialized = SteamController()->Init();
+			UE_LOG(LogSteamController, Log, TEXT("SteamController %s initialized."), bSteamAPIInitialized ? TEXT("could not be") : TEXT("has been"));
 		}
 		else
 		{
@@ -296,6 +298,11 @@ public:
 		return false;
 	}
 
+	virtual bool IsGamepadAttached() const override
+	{
+		return (bSteamAPIInitialized && bSteamControllerInitialized);
+	}
+
 private:
 
 	ControllerActionSetHandle_t ActionSetHandles[STEAM_CONTROLLER_MAX_ANALOG_ACTIONS];
@@ -308,6 +315,12 @@ private:
 
 	/** handler to send all messages to */
 	TSharedRef<FGenericApplicationMessageHandler> MessageHandler;
+
+	/** SteamAPI initialized **/
+	bool bSteamAPIInitialized;
+
+	/** SteamController initialized **/
+	bool bSteamControllerInitialized;
 };
 
 #endif // WITH_STEAM_CONTROLLER
